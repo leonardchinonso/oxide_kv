@@ -10,19 +10,28 @@ impl Database {
             map: std::collections::HashMap::new(),
         }
     }
-}
 
-impl Database {
-    pub fn set(&mut self, key: String, value: String) {
+    pub fn upsert(&mut self, key: String, value: String) {
         self.map.insert(key, value);
     }
-}
 
-impl Database {
     pub fn get(&self, key: String) -> Result<String, OxideKvError> {
         self.map
             .get(&key)
             .cloned()
             .ok_or_else(|| OxideKvError::Database(format!("Entry for key '{}' not found", key)))
+    }
+
+    pub fn remove(&mut self, key: String) -> Result<(), OxideKvError> {
+        match self.map.contains_key(&key) {
+            true => {
+                self.map.remove(&key);
+                Ok(())
+            }
+            false => Err(OxideKvError::Database(format!(
+                "Entry for key '{}' not found",
+                key
+            ))),
+        }
     }
 }
