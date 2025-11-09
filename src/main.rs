@@ -1,14 +1,13 @@
 mod database;
 mod error;
+mod server;
 
 use database::Database;
-
+use server::Server;
 fn main() {
+    env_logger::init();
     let mut db = Database::new();
-    db.set("foo".to_string(), "bar".to_string());
-    let val = db.get("foo".to_string());
-    match val {
-        Ok(v) => println!("Value for 'foo': {}", v),
-        Err(e) => println!("Error: {}", e),
-    }
+    let server = Server::new("8080");
+
+    server.start();
 }
